@@ -10,7 +10,6 @@ import {
 } from '@/lib/solver';
 import { MONETIZATION_LINK, SUBJECTS, type SubjectKey } from '@/lib/constants';
 import { solveWithGroq } from '@/lib/aiSolver';
-import type { SolverContext } from '@/lib/exams';
 
 const SAMPLE = 'f(x) = 2x^2 - 4x + 3';
 
@@ -27,10 +26,10 @@ const SUBJECT_OPTIONS: SubjectOption[] = [
   ...SUBJECTS.map((s) => ({ key: s.key, ar: s.ar })),
 ];
 
-export default function HomeworkSolver({ context }: { context: SolverContext | null }) {
+export default function HomeworkSolver() {
   const [input, setInput] = useState('');
   const [fileName, setFileName] = useState('');
-  const [subjectChoice, setSubjectChoice] = useState<SubjectKey | 'auto'>(context?.subjectKey ?? 'auto');
+  const [subjectChoice, setSubjectChoice] = useState<SubjectKey | 'auto'>('auto');
   const [solution, setSolution] = useState<SolverSolution | null>(null);
   const [summary, setSummary] = useState<SmartSummary | null>(null);
   const [showSummary, setShowSummary] = useState(false);
@@ -203,15 +202,6 @@ export default function HomeworkSolver({ context }: { context: SolverContext | n
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Input panel */}
         <div className="glass rounded-2xl p-5 space-y-4">
-          {context && (
-            <div className="flex items-start gap-3 p-3 rounded-xl bg-emerald-neon/10 border border-emerald-neon/25">
-              <BookOpen size={16} className="text-emerald-neon mt-0.5 shrink-0" />
-              <div className="min-w-0">
-                <p className="text-xs text-emerald-neon font-semibold mb-0.5">الموضوع المختار</p>
-                <p className="text-sm text-gray-200 break-words">{context.label}</p>
-              </div>
-            </div>
-          )}
           <div>
             <label className="block text-sm text-gray-400 mb-2">
               اختيار المادة

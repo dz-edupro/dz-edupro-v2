@@ -11,13 +11,11 @@ import {
   logoutUser,
   type User,
 } from '@/lib/auth';
-import type { SolverContext } from '@/lib/exams';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [page, setPage] = useState<PageKey>('solver');
-  const [solverContext, setSolverContext] = useState<SolverContext | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
 
@@ -34,16 +32,6 @@ function App() {
     logoutUser();
   };
 
-  const navigate = (key: PageKey) => {
-    setSolverContext(null);
-    setPage(key);
-  };
-
-  const openSolver = (context: SolverContext) => {
-    setSolverContext(context);
-    setPage('solver');
-  };
-
   return (
     <div className="app-bg min-h-screen">
       <Header
@@ -56,14 +44,14 @@ function App() {
       <div className="flex">
         <Sidebar
           current={page}
-          onNavigate={navigate}
+          onNavigate={setPage}
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
         />
 
         <main className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-6 lg:py-8 max-w-6xl mx-auto w-full">
-          {page === 'solver' && <HomeworkSolver context={solverContext} />}
-          {page === 'vault' && <ExamVault onSolve={openSolver} />}
+          {page === 'solver' && <HomeworkSolver />}
+          {page === 'vault' && <ExamVault />}
           {page === 'calculator' && <GradeCalculator />}
           {page === 'pomodoro' && <PomodoroTimer />}
 

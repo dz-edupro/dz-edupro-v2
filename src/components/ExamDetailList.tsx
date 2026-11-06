@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 import { ArrowRight, CircleCheck as CheckCircle2, Eye, FileText } from 'lucide-react';
-import type { SubjectKey } from '@/lib/constants';
-import type { SolverContext } from '@/lib/exams';
 
 export interface ExamDetailEntry {
   id: string;
@@ -14,18 +12,17 @@ export interface ExamDetailEntry {
 export interface ExamDetailSelection {
   heading: string;
   subheading: string;
-  subjectKey: SubjectKey;
   entries: ExamDetailEntry[];
 }
 
 export default function ExamDetailList({
   selection,
   onBack,
-  onSolve,
+  onOpen,
 }: {
   selection: ExamDetailSelection;
   onBack: () => void;
-  onSolve: (context: SolverContext) => void;
+  onOpen: (entry: ExamDetailEntry) => void;
 }) {
   const groups = useMemo(() => {
     const byYear = new Map<string, ExamDetailEntry[]>();
@@ -71,7 +68,7 @@ export default function ExamDetailList({
                 <li key={entry.id}>
                   <button
                     type="button"
-                    onClick={() => onSolve({ subjectKey: selection.subjectKey, label: entry.title })}
+                    onClick={() => onOpen(entry)}
                     className="group w-full glass rounded-xl p-4 flex items-center justify-between gap-3 text-right hover:border-emerald-neon/40 hover:-translate-y-0.5 transition-all duration-200"
                   >
                     <div className="min-w-0">
