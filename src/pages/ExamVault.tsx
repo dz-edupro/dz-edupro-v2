@@ -19,6 +19,7 @@ import {
   getBacExams,
   archiveCategoryForLevel,
   type ExamModel,
+  type SolverContext,
   type CategoryInfo,
   type OfficialExam,
 } from '@/lib/exams';
@@ -36,7 +37,7 @@ function toDetailEntry(exam: OfficialExam): ExamDetailEntry {
   };
 }
 
-export default function ExamVault() {
+export default function ExamVault({ onSolve }: { onSolve: (context: SolverContext) => void }) {
   const [view, setView] = useState<View>('levels');
   const [levelId, setLevelId] = useState('');
   const [levelAr, setLevelAr] = useState('');
@@ -183,7 +184,11 @@ export default function ExamVault() {
       {view === 'bem' && <BemSection onView={(selection) => openDetail(selection, 'bem')} />}
       {view === 'bac' && <BacSection onView={(selection) => openDetail(selection, 'bac')} />}
       {view === 'detail' && detail && (
-        <ExamDetailList selection={detail} onBack={() => setView(detailReturn)} />
+        <ExamDetailList
+          selection={detail}
+          onBack={() => setView(detailReturn)}
+          onSolve={onSolve}
+        />
       )}
     </div>
   );
@@ -527,6 +532,7 @@ function ModelTable({
   const selection: ExamDetailSelection = {
     heading: `${category.ar} — ${subject.ar}`,
     subheading: [levelAr, streamKey ? streamInfo(streamKey)?.shortAr : ''].filter(Boolean).join(' · '),
+    subjectKey: subject.key,
     entries: models.map((m) => ({
       id: m.id,
       title: m.title,
@@ -758,6 +764,7 @@ function BemSection({ onView }: { onView: (selection: ExamDetailSelection) => vo
     onView({
       heading: exam.subjectAr,
       subheading: exam.levelLabel,
+      subjectKey: exam.subjectKey,
       entries: exams.filter((e) => e.subjectAr === exam.subjectAr).map(toDetailEntry),
     });
 
@@ -820,6 +827,7 @@ function BacSection({ onView }: { onView: (selection: ExamDetailSelection) => vo
     onView({
       heading: exam.subjectAr,
       subheading: `${exam.levelLabel} · ${exam.streamLabel}`,
+      subjectKey: exam.subjectKey,
       entries: exams
         .filter((e) => e.subjectAr === exam.subjectAr && e.streamLabel === exam.streamLabel)
         .map(toDetailEntry),

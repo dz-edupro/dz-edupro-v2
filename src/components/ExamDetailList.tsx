@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
-import { ArrowRight, CircleCheck as CheckCircle2, FileText } from 'lucide-react';
+import { ArrowRight, CircleCheck as CheckCircle2, Eye, FileText } from 'lucide-react';
+import type { SubjectKey } from '@/lib/constants';
+import type { SolverContext } from '@/lib/exams';
 
 export interface ExamDetailEntry {
   id: string;
@@ -12,15 +14,18 @@ export interface ExamDetailEntry {
 export interface ExamDetailSelection {
   heading: string;
   subheading: string;
+  subjectKey: SubjectKey;
   entries: ExamDetailEntry[];
 }
 
 export default function ExamDetailList({
   selection,
   onBack,
+  onSolve,
 }: {
   selection: ExamDetailSelection;
   onBack: () => void;
+  onSolve: (context: SolverContext) => void;
 }) {
   const groups = useMemo(() => {
     const byYear = new Map<string, ExamDetailEntry[]>();
@@ -61,20 +66,31 @@ export default function ExamDetailList({
               </span>
               <span className="text-[11px] text-gray-500">{entries.length} موضوع</span>
             </div>
-            <ul className="glass rounded-xl divide-y divide-white/5 overflow-hidden">
+            <ul className="space-y-2">
               {entries.map((entry) => (
-                <li key={entry.id} className="flex items-center justify-between gap-3 p-4">
-                  <div className="min-w-0">
-                    <p className="text-sm text-white truncate">{entry.title}</p>
-                    <p className="text-[10px] text-gray-500 mt-0.5">{entry.downloads} تحميل</p>
-                  </div>
-                  {entry.hasSolution ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-neon bg-emerald-neon/10 px-2 py-1 rounded shrink-0">
-                      <CheckCircle2 size={12} /> حل متوفر
+                <li key={entry.id}>
+                  <button
+                    type="button"
+                    onClick={() => onSolve({ subjectKey: selection.subjectKey, label: entry.title })}
+                    className="group w-full glass rounded-xl p-4 flex items-center justify-between gap-3 text-right hover:border-emerald-neon/40 hover:-translate-y-0.5 transition-all duration-200"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm text-white truncate">{entry.title}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] text-gray-500">{entry.downloads} تحميل</span>
+                        {entry.hasSolution ? (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-neon">
+                            <CheckCircle2 size={11} /> حل متوفر
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-gray-500">بدون حل</span>
+                        )}
+                      </div>
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 shrink-0 text-xs font-bold bg-emerald-neon text-navy-950 group-hover:bg-emerald-bright px-3 py-2 rounded-lg shadow-neon-sm transition-colors">
+                      <Eye size={14} /> عرض
                     </span>
-                  ) : (
-                    <span className="text-[11px] text-gray-500 shrink-0">بدون حل</span>
-                  )}
+                  </button>
                 </li>
               ))}
             </ul>
