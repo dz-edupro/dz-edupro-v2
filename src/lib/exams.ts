@@ -57,6 +57,11 @@ export function archiveCategoryForLevel(levelId: string): CategoryInfo | null {
 /*  Model (individual exam sheet)                                      */
 /* ------------------------------------------------------------------ */
 
+export interface SolverContext {
+  subjectKey: SubjectKey;
+  label: string;
+}
+
 export interface ExamModel {
   id: string;
   number: number;
@@ -383,6 +388,7 @@ export interface OfficialExam {
   id: string;
   title: string;
   year: string;
+  subjectKey: SubjectKey;
   subjectAr: string;
   levelLabel: string;
   streamLabel: string;
@@ -394,7 +400,7 @@ export interface OfficialExam {
 
 const BEM_YEARS = ['2025', '2024', '2023', '2022', '2021', '2020'];
 
-const BEM_SUBJECTS: { ar: string; key: string }[] = [
+const BEM_SUBJECTS: { ar: string; key: SubjectKey }[] = [
   { ar: 'الرياضيات', key: 'math' },
   { ar: 'اللغة العربية', key: 'arabic' },
   { ar: 'العلوم الفيزيائية وكنولوجيا', key: 'physics' },
@@ -423,6 +429,7 @@ export function getBemExams(): OfficialExam[] {
         id: `bem-${subject.key}-${year}`,
         title: `شهادة التعليم المتوسط BEM — ${subject.ar} — ${year}`,
         year,
+        subjectKey: subject.key,
         subjectAr: subject.ar,
         levelLabel: 'BEM (السنة الرابعة متوسط)',
         streamLabel: '',
@@ -456,6 +463,7 @@ export function getBacExams(): OfficialExam[] {
           id: `bac-${stream.key}-${subject.key}-${year}`,
           title: `البكالوريا BAC — ${subject.ar} — ${stream.shortAr} — ${year}`,
           year,
+          subjectKey: subject.key,
           subjectAr: subject.ar,
           levelLabel: 'BAC (السنة الثالثة ثانوي)',
           streamLabel: stream.shortAr,
